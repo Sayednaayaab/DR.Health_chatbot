@@ -50,7 +50,7 @@ def load_user(user_id):
 # HuggingFace / OpenAI Router Client
 client = OpenAI(
     base_url="https://router.huggingface.co/v1",
-    api_key=os.getenv("HUGGINGFACE_API_KEY", "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"),
+    api_key=os.getenv("HUGGINGFACE_API_KEY"),
 )
 
 # ===================== SYSTEM PROMPT =====================
