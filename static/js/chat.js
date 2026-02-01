@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const conversationsList = document.getElementById('conversations-list');
     const conversationSearch = document.getElementById('conversation-search');
     const newConversationBtn = document.getElementById('new-conversation-btn');
+    const deleteAllBtn = document.getElementById('delete-all-btn');
 
     let currentConversationId = null;
     let chat_history = [];
@@ -207,6 +208,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Smooth scroll function
+    function smoothScrollToBottom(element) {
+        const targetScrollTop = element.scrollHeight;
+        const startScrollTop = element.scrollTop;
+        const distance = targetScrollTop - startScrollTop;
+        const duration = 300; // ms
+        let startTime = null;
+
+        function animation(currentTime) {
+            if (startTime === null) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min(timeElapsed / duration, 1);
+            const easeInOutCubic = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+            element.scrollTop = startScrollTop + distance * easeInOutCubic;
+            if (progress < 1) {
+                requestAnimationFrame(animation);
+            }
+        }
+        requestAnimationFrame(animation);
+    }
+
     // Add message to chat
     function addMessage(content, sender) {
         const messageDiv = document.createElement('div');
@@ -219,8 +241,8 @@ document.addEventListener('DOMContentLoaded', function() {
         messageDiv.appendChild(contentDiv);
         chatMessages.appendChild(messageDiv);
 
-        // Scroll to bottom
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Smooth scroll to bottom
+        smoothScrollToBottom(chatMessages);
     }
 
     // Add message cards to chat
@@ -252,8 +274,8 @@ document.addEventListener('DOMContentLoaded', function() {
         messageDiv.appendChild(cardsContainer);
         chatMessages.appendChild(messageDiv);
 
-        // Scroll to bottom
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Smooth scroll to bottom
+        smoothScrollToBottom(chatMessages);
     }
 
     // Get card class based on section for color coding
@@ -345,8 +367,8 @@ document.addEventListener('DOMContentLoaded', function() {
         messageDiv.appendChild(formContainer);
         chatMessages.appendChild(messageDiv);
 
-        // Scroll to bottom
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Smooth scroll to bottom
+        smoothScrollToBottom(chatMessages);
     }
 
     // Send message from follow-up selection
@@ -580,4 +602,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Search functionality
     conversationSearch.addEventListener('input', filterConversations);
+
+    // Delete all conversations functionality
+    deleteAllBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete all conversations? This action cannot be undone.')) {
+            deleteAllConversations();
+        }
+    });
+
+    // Sidebar toggle functionality
+    sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+        mainContent.classList.toggle('sidebar-open');
+    });
+
+    // Function to render conversations in the sidebar
+    function renderConversations(conversations) {
+        conversationsList.innerHTML = '';
+        conversations.forEach(conv => {
+            const convItem = document.createElement('div');
+            convItem.className = 'conversation-item';
+            convItem.setAttribute('data-conv-id', conv.id);
+            convItem.innerHTML = `
+                <div class="conversation-title">${conv.title}</div>
+                <button class="delete-conversation" data-conv-id="${conv.id}">🗑️</button>
+            `;
+            convItem.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('delete-conversation')) {
+                    loadConversation(conv.id);
+                }
+            });
+            conversationsList.appendChild(convItem);
+
+            // Add delete event listener
+            const deleteBtn = convItem.querySelector('.delete-conversation');
+            deleteBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (confirm('Are you sure you want to delete this conversation?')) {
+                    deleteConversation(conv.id);
+                }
+            });
+        });
+    }
+
+    // Function to filter conversations based on search input
+    function filterConversations() {
+        const searchTerm = conversationSearch.value.toLowerCase();
+        const filteredConversations = allConversations.filter(conv =>
+            conv.title.toLowerCase().includes(searchTerm)
+        );
+        renderConversations(filteredConversations);
+    }
 });
