@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. HealthBot - AI Medical Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Conversations</h2>
+                <input type="text" id="conversation-search" placeholder="Search conversations..." class="conversation-search">
+            </div>
+            <div class="conversations-list" id="conversations-list">
+                <!-- Conversations will be loaded here -->
+            </div>
+            <div class="sidebar-footer">
+                <a href="/settings" class="sidebar-link">⚙️ Settings</a>
+                <a href="/auth/logout" class="sidebar-link">🚪 Logout</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="container">
+                <div class="chat-container cyber-glass neon-border">
+                    <div class="chat-header">
+                        <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
+                        <h1 class="holographic"><span class="doctor-badge">🩺</span> Dr. HealthBot</h1>
+                        <div class="header-buttons">
+                            <button id="new-chat-button" class="ripple">New Chat</button>
+                            <button id="theme-toggle">🌙</button>
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be added here -->
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="message-input" placeholder="Describe your symptoms...">
+                        <button id="send-button">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>

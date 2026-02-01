@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Health Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container login-container">
+        <div class="chat-container cyber-glass neon-border float" style="height: auto; max-width: 700px; animation: fadeInUp 1s ease-out;">
+            <div class="chat-header">
+                <h1 class="holographic">Login to Health Chatbot</h1>
+                <div class="header-buttons">
+                    <button id="theme-toggle">🌙</button>
+                </div>
+            </div>
+            <div style="padding: 20px;">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div style="color: red; margin-bottom: 10px; animation: slideIn 0.5s ease-out 0.2s both;">
+                            {{ messages[0] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div style="margin-bottom: 15px; animation: slideIn 0.5s ease-out 0.4s both;">
+                    <a href="/auth/google_login" class="ripple" style="display: block; text-align: center; padding: 10px; background: #4285f4; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 10px; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(66, 133, 244, 0.5);">Continue with Google</a>
+                </div>
+                <form method="POST" action="/auth/manual_login">
+                    <div style="margin-bottom: 15px;">
+                        <input type="email" name="email" placeholder="Email" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; animation: slideIn 0.5s ease-out 0.6s both; transition: all 0.3s ease; box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);" onfocus="this.style.boxShadow='0 0 10px rgba(102, 126, 234, 0.6)'; this.style.borderColor='#667eea';" onblur="this.style.boxShadow='0 0 5px rgba(102, 126, 234, 0.3)'; this.style.borderColor='#ccc';">
+                        <div style="position: relative; margin-bottom: 10px; animation: slideIn 0.5s ease-out 0.8s both;">
+                            <input type="password" id="password" name="password" placeholder="Password" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; transition: all 0.3s ease; box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);" onfocus="this.style.boxShadow='0 0 10px rgba(102, 126, 234, 0.6)'; this.style.borderColor='#667eea';" onblur="this.style.boxShadow='0 0 5px rgba(102, 126, 234, 0.3)'; this.style.borderColor='#ccc';">
+                            <i class="fas fa-eye" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #ccc; transition: color 0.3s ease;" onmouseover="this.style.color='#667eea';" onmouseout="this.style.color='#ccc';"></i>
+                        </div>
+                        <button type="submit" class="ripple" style="width: 100%; padding: 10px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; border-radius: 5px; cursor: pointer; animation: slideIn 0.5s ease-out 1s both; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);" onmouseover="this.style.boxShadow='0 0 20px rgba(102, 126, 234, 0.8), 0 0 30px rgba(118, 75, 162, 0.5)'; this.style.transform='scale(1.02)';" onmouseout="this.style.boxShadow='0 0 10px rgba(102, 126, 234, 0.5)'; this.style.transform='scale(1)';">Login</button>
+                    </div>
+                </form>
+                <a href="/auth/register" style="display: block; text-align: center; color: #667eea; text-decoration: none; animation: slideIn 0.5s ease-out 1.2s both; transition: all 0.3s ease;" onmouseover="this.style.color='#764ba2'; this.style.textShadow='0 0 10px rgba(102, 126, 234, 0.5)';" onmouseout="this.style.color='#667eea'; this.style.textShadow='none';">Don't have an account? Register</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Apply theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.dataset.theme = savedTheme;
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Theme toggle functionality
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.body.dataset.theme = newTheme;
+            localStorage.setItem('theme', newTheme);
+            this.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function (e) {
+            // toggle the type attribute
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            // toggle the eye icon
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
+</body>
+</html>

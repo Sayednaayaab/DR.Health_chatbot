@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Health Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div style="max-width: 600px; margin: 0 auto; background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden;">
+            <div style="background: var(--header-bg); padding: 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                <h1 style="color: white; font-size: 1.5rem; margin: 0;">Settings</h1>
+                <button id="theme-toggle" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: white; transition: transform 0.3s ease;">🌙</button>
+            </div>
+            <div style="padding: 20px;">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: white;">System Prompt:</label>
+                    <textarea readonly rows="10" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--glass-border); background: var(--glass-bg-alt); color: white; resize: vertical;">{{ system_prompt }}</textarea>
+                </div>
+                <form id="settings-form">
+                    <div style="margin-bottom: 20px;">
+                        <label for="custom_prompt" style="display: block; margin-bottom: 10px; font-weight: bold; color: white;">Custom Prompt:</label>
+                        <textarea id="custom_prompt" name="custom_prompt" rows="6" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--glass-border); background: var(--glass-bg-alt); color: white; resize: vertical;" placeholder="Enter your custom prompt here...">{{ current_user.custom_prompt or '' }}</textarea>
+                    </div>
+                    <button type="submit" style="width: 100%; padding: 10px; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: white; border: none; border-radius: 5px; cursor: pointer;">Save Settings</button>
+                </form>
+                <div style="margin-top: 20px; text-align: center;">
+                    <a href="/" style="color: white; text-decoration: none;">← Back to Chat</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Apply theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.dataset.theme = savedTheme;
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Theme toggle functionality
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.body.dataset.theme = newTheme;
+            localStorage.setItem('theme', newTheme);
+            this.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        document.getElementById('settings-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const customPrompt = document.getElementById('custom_prompt').value;
+
+            fetch('/settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ custom_prompt: customPrompt }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while saving settings.');
+            });
+        });
+    </script>
+</body>
+</html>
